@@ -1,9 +1,12 @@
-@use "../abstracts/variables" as var;
-
-.titulo {
-    font-size: 4rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 2rem;
-    color: var.$color-red;
+.move-in-left {
+    animation: moveInLeft 1s ease-out;
 }
+
+.move-in-right {
+    animation: moveInRight 1s ease-out;
+}
+
+.move-in-bottom {
+    animation: moveInBottom 1s ease-out;
+}
+

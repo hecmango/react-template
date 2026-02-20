@@ -5,11 +5,10 @@ import { RouterProvider } from 'react-router-dom';
 
 import {router} from './router/index.tsx';
 
-import './styles/tailwind.css'
-import 'primereact/resources/themes/mira/theme.css'
-import 'primereact/resources/primereact.min.css'
+import 'primereact/resources/themes/lara-light-blue/theme.css'
 import 'primeicons/primeicons.css'
 
+import './styles/tailwind.css'
 import './styles/index.scss'
 
 createRoot(document.getElementById('root')!).render(
