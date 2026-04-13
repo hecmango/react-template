@@ -3,11 +3,28 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { useAuthStore } from '../store/useAuthStore';
+import { useNavigate } from "react-router-dom";
+
+import { useState } from 'react';
         
 
 export default function Login() {
 
     const { login } = useAuthStore();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleLogin = async () => {
+        try {
+            await login(email, password);
+            if (useAuthStore.getState().token) {
+                navigate("/dashboard");
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
@@ -34,6 +51,8 @@ export default function Login() {
                                 <InputText 
                                     className="w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-100 border-none rounded-xl" 
                                     placeholder="ejemplo@gmail.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                             <div className="flex flex-col gap-2 my-4">
@@ -56,11 +75,14 @@ export default function Login() {
                                     placeholder="********"
                                     toggleMask
                                     feedback={false}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
                             <Button 
                                 label="Iniciar sesión" 
-                                className="w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-800 text-white rounded-xl mt-4" 
+                                className="w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-800 text-white rounded-xl mt-4"
+                                onClick={handleLogin} 
                             />
                             <div>
                                 <p className="text-gray-600 mt-5 text-center text-xl">

@@ -1,5 +1,5 @@
-import axios from "axios";
 import { create } from "zustand";
+import authService from "../services/authService";
 
 interface User {
     nombre: string;
@@ -9,24 +9,23 @@ interface User {
 }
 interface AuthState {
     token: string | null;
+    user: User | null;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void> ;
     getUser: () => Promise<void>;
-    user: User | null;
 }
 
 export const useAuthStore = create<AuthState>()(
     (set) => ({
-        token: null,
+        token: localStorage.getItem("auth_token"),
         user: null,
 
         login: async (email, password) => {
             try {
-                const response = await axios.post("http://localhost:8002/api/auth/login", { email, password });
+                const response = await authService.login({ email, password });
                 if(response.status === 200) {
                     set({ token: response.data.access_token });
-                    localStorage.setItem("token", response.data.access_token);
-                    useAuthStore.getState().getUser();
+                    localStorage.setItem("auth_token", response.data.access_token);
                 }
             } catch (error) {
                 console.log(error);
@@ -35,10 +34,10 @@ export const useAuthStore = create<AuthState>()(
 
         logout: async () => {
             try {
-                const response = await axios.post("http://localhost:8002/api/auth/logout");
+                const response = await authService.logout();
                 if(response.status === 200) {
-                    set({ token: null });
-                    localStorage.removeItem("token");
+                    set({ token: null, user: null });
+                    localStorage.removeItem("auth_token");
                 }
             } catch (error) {
                 console.log(error);
@@ -47,7 +46,7 @@ export const useAuthStore = create<AuthState>()(
 
         getUser: async () => {
             try {
-                const response = await axios.get("http://localhost:8002/api/user");
+                const response = await authService.getUser();
                 if(response.status === 200) {
                    set({
                     user: {
