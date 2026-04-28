@@ -1,1 +1,27 @@
+/* 1. Definimos las capas */
+@layer theme, base, primereact, utilities;
+
+/* 2. IMPORTANTE: En v4 usa el import principal primero */
 @import "tailwindcss";
+
+/* 3. Bloque de configuración de colores */
+@theme {
+  --color-blue-primary: #101828;
+  --color-blue-secondary: #2b7fff;
+}
+
+/* 4. Mapeamos las capas para mantener la jerarquía que ya lograste */
+@layer base {
+  @import "tailwindcss/preflight";
+}
+
+@layer primereact {
+  @import "primereact/resources/themes/bootstrap4-light-blue/theme.css";
+  @import "primereact/resources/primereact.min.css";
+  @import "primeicons/primeicons.css";
+}
+
+/* 5. Forzamos las utilidades a su capa */
+@layer utilities {
+  @import "tailwindcss/utilities";
+}
