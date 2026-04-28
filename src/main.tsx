@@ -1,22 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { PrimeReactProvider } from 'primereact/api'
-import { RouterProvider } from 'react-router-dom';
-import { router } from './router/index.tsx';
-
-import Loader from './components/Loader.tsx';
-
-import 'primereact/resources/themes/lara-light-blue/theme.css'
-import 'primeicons/primeicons.css'
+import App from './App'
 
 import './styles/tailwind.css'
 import './styles/index.scss'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <PrimeReactProvider>
-        <Loader />
-        <RouterProvider router={router}/>
-    </PrimeReactProvider>
+    <App/>
   </StrictMode>,
 )

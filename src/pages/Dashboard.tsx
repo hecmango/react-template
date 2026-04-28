@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useEffect } from 'react';
+import { Button } from 'primereact/button';
 
 
 const Dashboard: React.FC = () => {
@@ -35,6 +36,13 @@ const Dashboard: React.FC = () => {
                     <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Activity</h2>
                     <p className="text-gray-600">No recent activity to display</p>
                 </div>
+
+                <Button 
+                label="Logout"
+                className='w-full mt-6'
+                onClick={() => useAuthStore.getState().logout()} 
+                />
+
             </div>
         </div>
     );
