@@ -76,10 +76,10 @@ export default function Login() {
                                     <Controller
                                         name="email"
                                         control={control}
-                                        render={({ field }) => (
+                                        render={({ field, fieldState }) => (
                                             <InputText 
                                                 {...field}
-                                                className={classNames("w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-100  rounded-xl", { 'p-invalid': errors.email })}
+                                                className={classNames("w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-100  rounded-xl", { 'p-invalid': fieldState.error })}
                                                 placeholder="ejemplo@gmail.com"
                                             />
                                         )}

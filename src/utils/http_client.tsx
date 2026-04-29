@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useLoaderStore } from '../store/useLoaderStore';
+import { useToastStore } from '../store/useToastStore';
 
 const api = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}/api/`, 
@@ -31,6 +32,13 @@ api.interceptors.response.use(
             if(window.location.pathname !== '/login') {
                 window.location.href = '/login';
             }
+        }
+        if (error.response && error.response.data.message) {
+            useToastStore.getState().showToast({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.response.data.message
+            });
         }
         return Promise.reject(error);
     }
