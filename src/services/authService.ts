@@ -30,7 +30,7 @@ const logout = async () => {
 }
 
 const getUser = async () => {
-    return api.get<getUserResponse>('user');
+    return api.get<getUserResponse>('usuarios/info');
 }
 
 export default {
