@@ -39,10 +39,10 @@ export const router = createBrowserRouter([
                 path: "instructores",
                 element: <Instructores />
             },
-            {
-                path: "*",
-                element: <NotFound />
-            }
         ]
     },
+    {
+        path: "*",
+        element: <NotFound />
+    }
 ]);
