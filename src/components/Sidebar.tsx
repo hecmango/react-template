@@ -24,7 +24,13 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
     };
 
     const toggleMenu = (label: string) => {
-        setOpenMenus(prev => ({ ...prev, [label]: !prev[label] }));
+        setOpenMenus(prev => (
+            { 
+                ...prev, 
+                [label]: !prev[label]
+             }
+            )
+        );
     };
 
     const items: MenuItem[] = [
@@ -76,13 +82,15 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
                     >
                         <i className={item.icon}></i>
                         <span className="flex-1">{item.label}</span>
-                        <i className={`pi ${isOpen ? 'pi-chevron-up' : 'pi-chevron-down'}`}></i>
+                        <i className={`pi pi-chevron-down transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}></i>
                     </button>
-                    {isOpen && (
-                        <div className="flex flex-col gap-1 ml-6 mt-1">
-                            {item.children!.map(child => renderItem(child))}
+                    <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100 mt-1' : 'grid-rows-[0fr] opacity-0'}`}>
+                        <div className="overflow-hidden">
+                            <div className="flex flex-col gap-1 ml-6">
+                                {item.children!.map(child => renderItem(child))}
+                            </div>
                         </div>
-                    )}
+                    </div>
                 </div>
             );
         }
