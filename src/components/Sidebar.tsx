@@ -65,8 +65,9 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
         }
     ];
 
-    const linkClass = ({ isActive }: { isActive: boolean }) =>
-        `p-3 rounded-lg flex items-center gap-3 ${isActive ? 'bg-blue-600' : 'hover:bg-gray-700'}`;
+    const linkClass = ({ isActive }: { isActive: boolean }) => {
+        return `p-3 rounded-lg flex items-center gap-3 ${isActive ? 'bg-blue-600' : 'hover:bg-gray-700'}`;
+    }
 
     const renderItem = (item: MenuItem) => {
         const isDropdown = !item.to && item.children && item.children.length > 0;
@@ -96,7 +97,7 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
         }
 
         return (
-            <NavLink key={item.label} to={item.to!} onClick={handleLinkClick} className={linkClass}>
+            <NavLink key={item.label} to={item.to!} onClick={handleLinkClick} className={linkClass} end>
                 <i className={item.icon}></i> {item.label}
             </NavLink>
         );

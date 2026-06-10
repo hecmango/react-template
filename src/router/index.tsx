@@ -5,8 +5,7 @@ import { PublicRoute } from "../components/PublicRoute";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { NotFound } from "../pages/NotFound";
 import { Usuarios } from "../pages/Usuarios";
-import { Instructores } from "../pages/Instructores";
-
+import cursosRoutes from "./cursosRouter";
 
 export const router = createBrowserRouter([
     {
@@ -35,10 +34,7 @@ export const router = createBrowserRouter([
                 path: "usuarios",
                 element: <Usuarios />
             },
-            {
-                path: "instructores",
-                element: <Instructores />
-            },
+            ...cursosRoutes
         ]
     },
     {
