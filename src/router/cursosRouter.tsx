@@ -1,6 +1,4 @@
 import { Cursos } from "../pages/cursos/Cursos";
-import { CrearCursos } from "../pages/cursos/CrearCursos";
-
 
 const cursosRoutes = [
     {
@@ -9,7 +7,7 @@ const cursosRoutes = [
     },
     {
         path: "/cursos/crear/:id?",
-        element: <CrearCursos />
+        element: <Cursos />
     }
 ]
 

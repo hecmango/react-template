@@ -4,24 +4,26 @@
 /* 2. IMPORTANTE: En v4 usa el import principal primero */
 @import "tailwindcss";
 
-/* 3. Bloque de configuración de colores */
+/* 3. Habilitar dark mode por clase en <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 4. Bloque de configuración de colores */
 @theme {
   --color-blue-primary: #101828;
   --color-blue-secondary: #2b7fff;
 }
 
-/* 4. Mapeamos las capas para mantener la jerarquía que ya lograste */
+/* 5. Mapeamos las capas para mantener la jerarquía que ya lograste */
 @layer base {
   @import "tailwindcss/preflight";
 }
 
 @layer primereact {
-  @import "primereact/resources/themes/lara-light-blue/theme.css";
   @import "primereact/resources/primereact.min.css";
   @import "primeicons/primeicons.css";
 }
 
-/* 5. Forzamos las utilidades a su capa */
+/* 6. Forzamos las utilidades a su capa */
 @layer utilities {
   @import "tailwindcss/utilities";
 }

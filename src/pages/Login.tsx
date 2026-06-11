@@ -3,7 +3,9 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { useAuthStore } from '../store/useAuthStore';
+import { applyTheme, useThemeStore } from '../store/useThemeStore';
 import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
 
 import * as z from 'zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -11,10 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { classNames } from 'primereact/utils';
 
 const loginSchema = z.object({
-    email: z
-        .string()
-        .min(1, 'El correo electrónico es requerido')
-        .email('El correo electrónico no es válido'),
+    email: z.email('El correo electrónico no es válido'),
     password: z
         .string()
         .min(6, 'La contraseña debe tener al menos 6 caracteres')
@@ -28,6 +27,13 @@ export default function Login() {
 
     const { login } = useAuthStore();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        applyTheme('light');
+        return () => {
+            applyTheme(useThemeStore.getState().theme);
+        };
+    }, []);
 
 
     const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
@@ -77,9 +83,9 @@ export default function Login() {
                                         name="email"
                                         control={control}
                                         render={({ field, fieldState }) => (
-                                            <InputText 
+                                            <InputText
                                                 {...field}
-                                                className={classNames("w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-100  rounded-xl", { 'p-invalid': fieldState.error })}
+                                                className={classNames("w-full p-3 md:p-4 lg:p-5 text-base md:text-lg lg:text-xl bg-gray-100 rounded-xl", { 'p-invalid': fieldState.error })}
                                                 placeholder="ejemplo@gmail.com"
                                             />
                                         )}
@@ -97,7 +103,7 @@ export default function Login() {
                                             <Password 
                                                 {...field}
                                                 className="*:w-full" 
-                                                inputClassName={classNames("w-full md:p-4 lg:p-5 bg-gray-100  rounded-xl text-gray-700", { 'p-invalid': fieldState.error })}
+                                                inputClassName={classNames("w-full md:p-4 lg:p-5 bg-gray-100 rounded-xl text-gray-700", { 'p-invalid': fieldState.error })}
                                                 pt={{
                                                     showIcon: { 
                                                         className: 'text-lg md:text-xl lg:text-2xl',

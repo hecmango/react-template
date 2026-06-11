@@ -28,11 +28,11 @@ export const MainLayout = ({ children }: Props) => {
     
 
     return (
-        <div className="flex h-screen bg-gray-100 overflow-hidden">
+        <div className="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
             <Sidebar isVisible={sidebarOpen} setIsVisible={setSidebarOpen} />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Navbar onToggleSidebar={toggleSidebar} />
-                <main className="p-5">
+                <main className="p-8">
                     {children}
                 </main>
             </div>

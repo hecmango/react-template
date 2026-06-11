@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useThemeStore } from '../store/useThemeStore';
 
 type TitleTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 type TitleSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
@@ -38,10 +39,14 @@ export const Title = ({
     color = 'text-gray-800',
     className,
 }: TitleProps) => {
+
+    const { theme } = useThemeStore();
+    const themeColor = theme === 'dark' ? 'text-white-100' : color;
+
     const classes = [
         sizeClasses[size],
         weightClasses[weight],
-        color,
+        themeColor,
         className,
     ]
         .filter(Boolean)
