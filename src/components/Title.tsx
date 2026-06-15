@@ -36,7 +36,7 @@ export const Title = ({
     as: Tag = 'h1',
     size = '4xl',
     weight = 'bold',
-    color = 'text-gray-800',
+    color = 'text-blue-primary',
     className,
 }: TitleProps) => {
 

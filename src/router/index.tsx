@@ -6,6 +6,7 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import { NotFound } from "../pages/NotFound";
 import { Usuarios } from "../pages/Usuarios";
 import cursosRoutes from "./cursosRouter";
+import horariosRoutes from "./horariosRouter";
 
 export const router = createBrowserRouter([
     {
@@ -34,7 +35,8 @@ export const router = createBrowserRouter([
                 path: "usuarios",
                 element: <Usuarios />
             },
-            ...cursosRoutes
+            ...cursosRoutes,
+            ...horariosRoutes
         ]
     },
     {

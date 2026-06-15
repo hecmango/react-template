@@ -32,7 +32,7 @@ export const MainLayout = ({ children }: Props) => {
             <Sidebar isVisible={sidebarOpen} setIsVisible={setSidebarOpen} />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Navbar onToggleSidebar={toggleSidebar} />
-                <main className="p-8">
+                <main className="p-8 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 overflow-auto">
                     {children}
                 </main>
             </div>

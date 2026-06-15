@@ -47,6 +47,18 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
             children: []
         },
         {
+            label: 'Horarios',
+            icon: 'pi pi-clock',
+            to: '/horarios',
+            children: []
+        },
+        {
+            label: 'Cursos',
+            icon: 'pi pi-book',
+            to: '/cursos',
+            children: []
+        },
+        {
             label: 'Catalogos',
             icon: 'pi pi-box',
             children: [
@@ -55,14 +67,6 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
                 { label: 'Estado de los cursos', icon: 'pi pi-chart-bar', to: '/catalogos/estados' }
             ]
         },
-        {
-            label: 'Cursos',
-            icon: 'pi pi-book',
-            children: [
-                { label: 'Listado de cursos', icon: 'pi pi-list', to: '/cursos' },
-                { label: 'Crear curso', icon: 'pi pi-plus', to: '/cursos/crear' }
-            ]
-        }
     ];
 
     const linkClass = ({ isActive }: { isActive: boolean }) => {
