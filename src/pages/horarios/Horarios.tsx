@@ -9,9 +9,24 @@ import { useEffect } from 'react';
 
 import { useRef } from 'react';
 
+import { useToastStore } from '../../store/useToastStore';
+
 import horariosService, { type Horario } from '../../services/horariosService';
 
 export function Horarios() {
+
+    const calendarInicioRef = useRef<any>(null);
+    const calendarFinRef = useRef<any>(null);
+
+    const [horarios, setHorarios] = useState<Horario[]>([]);
+
+    const [mostrarDialog, setMostrarDialog] = useState(false);
+    const [mostrarDialogEliminar, setMostrarDialogEliminar] = useState(false);
+
+
+    const [horarioSelected, setHorarioSelected] = useState({ id: 0, dia_semana: '', hora_inicio: '', hora_fin: '' });
+
+    const [editando, setEditando] = useState<boolean>(false);
 
     const obtenerHorarios = async () => {
         try {
@@ -26,24 +41,77 @@ export function Horarios() {
         obtenerHorarios();
     }, []);
 
-    const calendarInicioRef = useRef<any>(null);
-    const calendarFinRef = useRef<any>(null);
-
-    const [horarios, setHorarios] = useState<Horario[]>([]);
-
-    const [mostrarDialog, setMostrarDialog] = useState(false);
-    const [mostrarDialogEliminar, setMostrarDialogEliminar] = useState(false);
-
-
-    const [horarioSelected, setHorarioSelected] = useState({ dia_semana: '', horaInicio: '', horaFin: '' });
-
-    const handleEliminarHorario = (dia_semana: string, horaInicio: string, horaFin: string) => {
-        setHorarioSelected({ dia_semana, horaInicio, horaFin });
+    const handleConfigurarEdicion = async (id: number, dia_semana: string, hora_inicio: string, hora_fin: string) => {
+        setHorarioSelected({ id, dia_semana, hora_inicio: hora_inicio, hora_fin: hora_fin });
     }
 
-    const formatTime = (value: Date | Date[] | null | undefined): string => {
+    const handleEliminarConfirmado = async () => {
+        try {
+            const response = await horariosService.eliminarHorario(horarioSelected.id);
+            if(response.status === 200) {
+                useToastStore.getState().showToast({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: response.data.message || 'Horario eliminado con éxito'
+                });
+                obtenerHorarios();
+                setMostrarDialogEliminar(false);
+            }
+        } catch (error) {}
+    };
+
+    const handleCrearEditarHorario = async () => {
+        if(!horarioSelected.hora_inicio || !horarioSelected.hora_fin) {
+            useToastStore.getState().showToast({
+                severity: 'warn',
+                summary: 'Campos incompletos',
+                detail: 'Por favor, selecciona hora de inicio y hora de fin'
+            });
+            return;
+        }
+        if(editando) {
+            await handleEditarHorario();
+        } else {
+            await crearHorario();
+        }
+    }
+
+    const crearHorario = async () => {
+        try {
+            const response = await horariosService.crearHorario(horarioSelected.dia_semana, horarioSelected.hora_inicio, horarioSelected.hora_fin);
+            if(response.status === 201) {
+                useToastStore.getState().showToast({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Horario creado con éxito'
+                });
+                obtenerHorarios();
+                setMostrarDialog(false);
+            }
+        } catch (error) {}
+    }
+
+    const handleEditarHorario = async () => {
+        try {
+            const response = await horariosService.editarHorario(horarioSelected.id, horarioSelected.dia_semana, horarioSelected.hora_inicio, horarioSelected.hora_fin);
+            if(response.status === 200) {
+                useToastStore.getState().showToast({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Horario editado con éxito'
+                });
+                obtenerHorarios();
+                setMostrarDialog(false);
+            }
+        } catch (error) {}
+        finally {
+            setEditando(false);
+        }
+    }
+
+    const formatTime = (value: Date | null | undefined): string => {
         if (!value || Array.isArray(value)) return '';
-        return value.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        return value.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
     const stringToDate = (timeString: string) => {
@@ -56,14 +124,22 @@ export function Horarios() {
 
     const headerModalElement = (
         <div className="flex items-center justify-between">
-            <Title size='2xl' className='text-center'>Seleccionar horario para {horarioSelected.dia_semana}</Title>
+            <Title size='2xl' className='text-center'>{editando ? 'Editar' : 'Crear'} horario para {horarioSelected.dia_semana}</Title>
         </div>
     )
 
     const footerModalElement = (
         <div className="flex justify-center gap-2">
-            <CustomButton label="Cancelar" outlined onClick={() => setMostrarDialog(false)} />
-            <CustomButton label="Guardar" onClick={() => setMostrarDialog(false)} />
+            <CustomButton label="Cancelar" outlined 
+            onClick={() => {
+                setMostrarDialog(false);
+                setHorarioSelected({ id: 0, dia_semana: '', hora_inicio: '', hora_fin: '' });
+                setEditando(false);
+            }} />
+            <CustomButton label={editando ? 'Editar' : 'Crear'} 
+            onClick={() => {
+                handleCrearEditarHorario();
+            }} />
         </div>
     )
 
@@ -85,10 +161,16 @@ export function Horarios() {
                                 {horario.periodos.map((periodo, index) => {
                                     const chipTemplate = (
                                         <div className="flex items-center gap-2 px-2 py-1">
-                                            <span className="text-blue-600">{`${periodo.horaInicio} - ${periodo.horaFin}`}</span>
-                                            <i className="pi pi-times-circle text-blue-600 hover:text-red-500 cursor-pointer"
+                                            <span className="text-blue-600">{`${periodo.hora_inicio} - ${periodo.hora_fin}`}</span>
+                                            <i title='Editar' className="pi pi-pencil text-blue-600 hover:text-orange-500 cursor-pointer"
                                             onClick={() => {
-                                                handleEliminarHorario(horario.dia_semana, periodo.horaInicio, periodo.horaFin);
+                                                handleConfigurarEdicion(periodo.id, horario.dia_semana, periodo.hora_inicio, periodo.hora_fin);
+                                                setEditando(true);
+                                                setMostrarDialog(true);
+                                            }} />
+                                            <i title='Eliminar' className="pi pi-times-circle text-blue-600 hover:text-red-500 cursor-pointer"
+                                            onClick={() => {
+                                                handleConfigurarEdicion(periodo.id, horario.dia_semana, periodo.hora_inicio, periodo.hora_fin);
                                                 setMostrarDialogEliminar(true);
                                             }} />
                                         </div>
@@ -106,7 +188,11 @@ export function Horarios() {
                             onClick={
                                 () => {
                                     setMostrarDialog(true);
-                                    setHorarioSelected({ dia_semana: horario.dia_semana, horaInicio: '', horaFin: '' });
+                                    const ahora = new Date()
+                                    const ahoraMasUnaHora = new Date(ahora.getTime() + 60 * 60 * 1000);
+                                    const horaActualFormateada = formatTime(ahora);
+                                    const horaMasUnaHoraFormateada = formatTime(ahoraMasUnaHora);
+                                    setHorarioSelected({ id: 0, dia_semana: horario.dia_semana, hora_inicio: horaActualFormateada, hora_fin: horaMasUnaHoraFormateada });
                                 }
                             } 
                             />
@@ -122,15 +208,15 @@ export function Horarios() {
                     <div className="flex-1">
                         <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Hora inicio</label>
                         <Calendar ref={calendarInicioRef} timeOnly className="w-full" placeholder="Selecciona hora de inicio" showIcon icon={() => <i className="pi pi-clock"/>}
-                        onChange={(e) => setHorarioSelected(prev => ({ ...prev, horaInicio: formatTime(e.value) }))}
-                        value={stringToDate(horarioSelected.horaInicio)}
+                        onChange={(e) => setHorarioSelected(prev => ({ ...prev, hora_inicio: formatTime(e.value) }))}
+                        value={stringToDate(horarioSelected.hora_inicio)}
                         footerTemplate={() =>
                             <div className="flex justify-end gap-2 p-2">
                                 <CustomButton 
                                 label="Cancelar" 
                                 outlined 
                                 onClick={() => {
-                                    setHorarioSelected(prev => ({ ...prev, horaInicio: '' }));
+                                    setHorarioSelected(prev => ({ ...prev, hora_inicio: '' }));
                                     calendarInicioRef.current?.hide();
                                 }} 
                                 />
@@ -147,15 +233,15 @@ export function Horarios() {
                     <div className="flex-1">
                         <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Hora fin</label>
                         <Calendar  ref={calendarFinRef} timeOnly className="w-full" placeholder="Selecciona hora de fin" showIcon icon={() => <i className="pi pi-clock"/>}
-                        onChange={(e) => setHorarioSelected(prev => ({ ...prev, horaFin: formatTime(e.value) }))}
-                        value={stringToDate(horarioSelected.horaFin)}
+                        onChange={(e) => setHorarioSelected(prev => ({ ...prev, hora_fin: formatTime(e.value) }))}
+                        value={stringToDate(horarioSelected.hora_fin)}
                         footerTemplate={() =>
                             <div className="flex justify-end gap-2 p-2">
                                 <CustomButton 
                                 label="Cancelar" 
                                 outlined 
                                 onClick={() => {
-                                    setHorarioSelected(prev => ({ ...prev, horaFin: '' }));
+                                    setHorarioSelected(prev => ({ ...prev, hora_fin: '' }));
                                     calendarFinRef.current?.hide();
                                 }} />
                                 <CustomButton 
@@ -183,13 +269,13 @@ export function Horarios() {
                 <div className="flex justify-center gap-2">
                     <CustomButton label="Cancelar" outlined onClick={() => setMostrarDialogEliminar(false)} />
                     <CustomButton label="Eliminar" className="bg-red-500 hover:bg-red-600" onClick={() => {
-                        setMostrarDialogEliminar(false);
+                        handleEliminarConfirmado();
                     }} />
                 </div>
             }>
                 <p className="text-gray-700 dark:text-gray-300 text-center">
                     ¿Estás seguro de que deseas eliminar el horario seleccionado? <br />
-                    <strong>{`${horarioSelected.dia_semana} - ${horarioSelected.horaInicio} a ${horarioSelected.horaFin}`}</strong>
+                    <strong>{`${horarioSelected.dia_semana} - ${horarioSelected.hora_inicio} a ${horarioSelected.hora_fin}`}</strong>
                 </p>
             </Dialog>
         </div>
