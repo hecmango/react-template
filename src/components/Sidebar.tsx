@@ -59,7 +59,7 @@ export const Sidebar = ({ isVisible, setIsVisible }: Props) => {
             children: []
         },
         {
-            label: 'Catalogos',
+            label: 'Catálogos',
             icon: 'pi pi-box',
             children: [
                 { label: 'Categorías del curso', icon: 'pi pi-tag', to: '/catalogos/categorias' },
